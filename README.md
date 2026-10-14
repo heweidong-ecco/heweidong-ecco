@@ -7,7 +7,7 @@
 >
 > *External constraints and feedback for AI-generated work — turning "hoping people remember" into "machines that block".*
 
-**10 个已完成的 AI 工程项目** · 全部可点开 · **每条都注明边界与未验证项**（不假装全绿）
+**下面这些仓库** · 公开仓全部可点开 · **🔻 标出边界与未验证项**（不假装全绿）
 
 ---
 
@@ -15,7 +15,7 @@
 
 > 如果只想看三个：**[agent-eval-gate](https://github.com/heweidong-ecco/agent-eval-gate)**（一道上线评测门，抓到过只有外部门能发现的缺陷）·
 > **[agent-pitfalls-kb](https://github.com/heweidong-ecco/agent-pitfalls-kb)**（唯一读者是 Agent 的规则库）·
-> **[fastapi-rag-agent](https://github.com/heweidong-ecco/fastapi-rag-agent)**（最完整的生产级件）。
+> **[memory-system](https://github.com/heweidong-ecco/memory-system)**（分层记忆系统 · Append-Only 由数据库触发器强制）。
 > 详情都在下面。
 
 ---
@@ -27,7 +27,6 @@
 | 仓库 | 一句话 |
 | :-- | :-- |
 | [**ai-delivery-harness-engineering**](https://github.com/heweidong-ecco/ai-delivery-harness-engineering) | AI 代码交付的**治理层**：规则 ＋ 十阶段流水线 ＋ 可程序化质量门禁 ＋ **三道防编造闸**。`make gate` 一次 15 步 · 137 测试 · 84% 覆盖 · **17 个可独立复用的门禁脚本**。<br>🔻 **已封存**：它是**容器不是内容** —— 缺可填充的真实来源，**十阶段从未被真实需求走过**（填充 0%）。 |
-| [**skills-workflow**](https://github.com/heweidong-ecco/skills-workflow) | 把 Agent 的「**提醒式**」约束改造成**硬约束**：`CLAUDE.md` **173 行 → 34 行** · 关键约束下沉到 `PreToolUse` hook ＋ `permissions.deny`。<br>**抗绕过用例 1/5 → 5/5**，且别人能自己跑（`tests/07-bypass-resistance.sh`）。<br>🔻 **实测中查出这道门本身是坏的**（三层静默失效），修复后才是 5/5。 |
 
 ## 可运行的项目 · Runnable Projects
 
@@ -35,9 +34,9 @@
 
 | 仓库 | 一句话 |
 | :-- | :-- |
-| [**fastapi-rag-agent**](https://github.com/heweidong-ecco/fastapi-rag-agent) | **单 Agent ＋ LangGraph**（不上多 Agent）；**Agent loop 不参与业务循环**（理由：系统整体稳定性）。<br>混合检索 **BM25 ＋ 向量 ＋ RRF 融合**（只看排名、不吃分数 —— 两路量纲不同）· NLP 数据对齐（中英 / 全角半角）· 查询改写**两套方案比过**（本地 LoRA vs 云端 API）。<br>**10,019 行** · 全面复审修掉 24 个问题（最危险的一类是**静默**）。<br>🔻 **边界三条**：是三版删减后的版本 · 重排序模块未并入本仓全量链路 · README 里的 P99<800ms 是**目标不是实测**。 |
 | [**ess-ai-sales-system**](https://github.com/heweidong-ecco/ess-ai-sales-system) | 从**一句业务描述**拆出可执行的系统设计（需求基线 → 系统总纲 → 5 份决策记录）。<br>每条决策都是「**选 A 不选 B**」且**可追溯** —— 外部调研 21 来源 / 40 claim，**对抗核验后剔除了 4 条**。<br>🔻 **全部是 DEMO · 虚构厂商。** |
 | [**memory-system**](https://github.com/heweidong-ecco/memory-system) | 分层记忆系统的**架构**：多租户 · 6 类存储 · 5 层检索 · 程序性记忆自进化。<br>**Append-Only 用数据库触发器强制** —— 有测试证明 `UPDATE` / `DELETE` 真被拒绝（26 个用例）。 |
+| 🔒 *生产级 RAG ＋ Agent API 服务* | **单 Agent ＋ LangGraph**（不上多 Agent）；**Agent loop 不参与业务循环**（理由：系统整体稳定性）。<br>混合检索 **BM25 ＋ 向量 ＋ RRF 融合**（只看排名、不吃分数 —— 两路量纲不同）· NLP 数据对齐（中英 / 全角半角）· 查询改写**两套方案比过**（本地 LoRA vs 云端 API）。<br>**10,019 行** · 全面复审修掉 24 个问题（最危险的一类是**静默**）。<br>🔻 **边界三条**：是三版删减后的版本 · 重排序模块未并入本仓全量链路 · README 里的 P99<800ms 是**目标不是实测**。（**private**） |
 
 ## 评测与数据 · Evaluation & Data
 
@@ -50,12 +49,11 @@
 
 ## 知识库 · Knowledge Base
 
-> 本机 `agent-facing/`（直接给 Agent 读）· `agent-facing-human/`（对象是 Agent，人也参与）
+> 本机 `agent-facing/`（直接给 Agent 读）
 
 | 仓库 | 一句话 |
 | :-- | :-- |
 | [**agent-pitfalls-kb**](https://github.com/heweidong-ecco/agent-pitfalls-kb) | **给 Agent 读的可执行规则库**。只收**严重**问题：*不报错、不变红，却能让错的结论被当成正确结论交付*。<br>**每篇必备五节，第 5 节是「怎么验证它被落地」** —— 判据：「**如果这条被违反了，有没有任何东西会变红或出声？**」答「没有」⇒ **它还没落地**。<br>⭐ **库自己被实测打过两次脸，两次都写进了库**（一篇里七条规则只有 1 条是真门；一道门标着「已装」却挡不住）。<br>**4,257 行** · 结构 = 四道门 ＋ **门自己有防腐**。 |
-| [**claude-agent-skills**](https://github.com/heweidong-ecco/claude-agent-skills) | Agent Skills 的开发与维护仓：从**需求记录**到**可加载的 `SKILL.md`** —— 含设计过程、迭代留痕与验证证据。 |
 
 ## 工具与 Kit · Toolkits
 
@@ -73,12 +71,12 @@
 | 🔒 *项目级 Agent 约束系统* | 约束系统设计（**private** · 设计阶段）。 |
 | 🔒 *设置与方案* | Agent 的配置与纪律方案集（**private**）。 |
 
-> 上表 3 行带 🔒 的：**只给描述、不给仓名**（它们是 private 仓）。
+> 带 🔒 的条目 = **private 仓：只给描述、不给仓名**。
 
 ---
 
 ## 关于这份清单
 
-- **分类靠 GitHub Topics**：每个仓都带 `agent-harness-engineering` / `agent-projects` / `agent-facing` / `agent-facing-human`，点 topic 即可筛同类
-- **🔻 表示边界** —— 每条都如实标注了**未验证 / 已封存 / 未并入**的部分。**不假装全绿**是这套工程的默认纪律。
+- **分类对齐本机目录** —— 每个分类下都标了 `本机 …/` 路径；也可点仓上的 topic（`agent-harness-engineering` / `agent-projects` / `agent-facing`）筛同类
+- **🔻 表示边界** —— 标出**未验证 / 已封存 / 未并入**的部分。**不假装全绿**是这套工程的默认纪律。
 - ⚠️ 有一道门标着「硬」，实测后发现它其实只是「半硬」，**已降级重标**。
